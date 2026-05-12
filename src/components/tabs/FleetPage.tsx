@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, CheckCircle2, Truck, Wrench } from "lucide-react";
+import { airportOptions } from "../../data/airports";
 import { fleetVehicleSizes, fleetVehicleStatuses, fleetVehicleTypes, mockFleet } from "../../data/mockFleet";
-import type { FleetVehicle, FleetVehicleStatus, FleetVehicleType } from "../../types/dispatch";
+import type { AirportCode, FleetVehicle, FleetVehicleStatus, FleetVehicleType } from "../../types/dispatch";
 import { KpiCard } from "../ui/KpiCard";
 import { Panel } from "../ui/Panel";
 
@@ -9,16 +10,18 @@ type FleetFilter = "All";
 
 export function FleetPage() {
   const [fleet, setFleet] = useState<FleetVehicle[]>(mockFleet);
+  const [locationFilter, setLocationFilter] = useState<AirportCode | FleetFilter>("All");
   const [typeFilter, setTypeFilter] = useState<FleetVehicleType | FleetFilter>("All");
   const [statusFilter, setStatusFilter] = useState<FleetVehicleStatus | FleetFilter>("All");
   const [sizeFilter, setSizeFilter] = useState<FleetVehicle["size"] | FleetFilter>("All");
 
   const filteredFleet = useMemo(() => fleet.filter((vehicle) => {
+    const locationMatches = locationFilter === "All" || vehicle.location === locationFilter;
     const typeMatches = typeFilter === "All" || vehicle.type === typeFilter;
     const statusMatches = statusFilter === "All" || vehicle.status === statusFilter;
     const sizeMatches = sizeFilter === "All" || vehicle.size === sizeFilter;
-    return typeMatches && statusMatches && sizeMatches;
-  }), [fleet, sizeFilter, statusFilter, typeFilter]);
+    return locationMatches && typeMatches && statusMatches && sizeMatches;
+  }), [fleet, locationFilter, sizeFilter, statusFilter, typeFilter]);
 
   const availableCount = fleet.filter((vehicle) => vehicle.status === "Available").length;
   const downCount = fleet.filter((vehicle) => vehicle.status === "Down / Unavailable" || vehicle.status === "Maintenance").length;
@@ -45,7 +48,8 @@ export function FleetPage() {
       </div>
 
       <Panel className="p-4">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
+          <FilterSelect label="Location" value={locationFilter} options={["All", ...airportOptions]} onChange={(value) => setLocationFilter(value as AirportCode | FleetFilter)} />
           <FilterSelect label="Truck Type" value={typeFilter} options={["All", ...fleetVehicleTypes]} onChange={(value) => setTypeFilter(value as FleetVehicleType | FleetFilter)} />
           <FilterSelect label="Status" value={statusFilter} options={["All", ...fleetVehicleStatuses]} onChange={(value) => setStatusFilter(value as FleetVehicleStatus | FleetFilter)} />
           <FilterSelect label="Size" value={sizeFilter} options={["All", ...fleetVehicleSizes]} onChange={(value) => setSizeFilter(value as FleetVehicle["size"] | FleetFilter)} />
@@ -57,6 +61,7 @@ export function FleetPage() {
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
               <th className="px-4 py-3">Truck</th>
+              <th className="px-4 py-3">Location</th>
               <th className="px-4 py-3">Type</th>
               <th className="px-4 py-3">Size</th>
               <th className="px-4 py-3">Make / Model</th>
@@ -71,6 +76,7 @@ export function FleetPage() {
             {filteredFleet.map((vehicle) => (
               <tr key={vehicle.id} className="bg-white">
                 <td className="px-4 py-3"><div className="font-semibold text-ink">{vehicle.truckNumber}</div><div className="text-xs text-slate-500">{vehicle.id}</div></td>
+                <td className="px-4 py-3 font-semibold text-slate-700">{vehicle.location}</td>
                 <td className="px-4 py-3 text-slate-700">{vehicle.type}</td>
                 <td className="px-4 py-3 text-slate-700">{vehicle.size}</td>
                 <td className="px-4 py-3 text-slate-700">{vehicle.make} {vehicle.model}</td>

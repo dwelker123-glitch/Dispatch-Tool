@@ -5,6 +5,7 @@ const sizes: FleetVehicle["size"][] = ["Large", "Large", "Medium", "Small", "Med
 const makes = ["Freightliner", "Isuzu", "Ford", "International", "Hino"];
 const models = ["M2", "NPR", "Transit", "MV", "268"];
 const capacities = ["18 carts", "22 carts", "14 carts", "8 carts", "16 carts"];
+const locations = ["ORD", "SEA", "DFW", "DEN", "LAX", "IAH"] as const;
 
 const statusCycle: FleetVehicleStatus[] = [
   "Available",
@@ -36,6 +37,7 @@ export const mockFleet: FleetVehicle[] = Array.from({ length: 110 }, (_, index) 
   return {
     id: `TRK-${String(index + 1).padStart(4, "0")}`,
     truckNumber: String(4100 + index).padStart(4, "0"),
+    location: locations[index % locations.length],
     type: truckTypes[typeIndex],
     size: sizes[typeIndex],
     make: makes[typeIndex],

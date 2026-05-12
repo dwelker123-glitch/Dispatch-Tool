@@ -37,6 +37,7 @@ const lastNames = [
 ];
 
 const shiftStarts = ["04:00", "05:00", "06:00", "07:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00"];
+const locations = ["ORD", "SEA", "DFW", "DEN", "LAX", "IAH"] as const;
 
 const statusCycle: StaffStatus[] = [
   "Available",
@@ -73,6 +74,7 @@ export const mockStaffing: StaffMember[] = Array.from({ length: 200 }, (_, index
     id: `EMP-${String(number).padStart(4, "0")}`,
     name: `${firstNames[index % firstNames.length]} ${lastNames[Math.floor(index / firstNames.length) % lastNames.length]} ${number}`,
     role,
+    location: locations[index % locations.length],
     operationType,
     shift: {
       start: shiftStart,

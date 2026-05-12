@@ -13,6 +13,8 @@ export type OperationType = "mainline" | "express";
 
 export type AircraftCategory = "regional" | "narrowbody" | "widebody";
 
+export type AirportCode = "ORD" | "SEA" | "DFW" | "DEN" | "LAX" | "IAH";
+
 export type ServiceType =
   | "load-ua"
   | "load-other"
@@ -42,6 +44,8 @@ export type FlightAssignment = {
   inboundEta: string;
   aircraft: string;
   serviceType: ServiceType;
+  originAirport?: AirportCode;
+  destinationAirport?: string;
   notes: string;
   edited?: boolean;
   overtime?: boolean;
@@ -161,6 +165,7 @@ export type StaffMember = {
   id: string;
   name: string;
   role: StaffRole;
+  location: AirportCode;
   operationType: OperationType;
   shift: Shift;
   status: StaffStatus;
@@ -202,6 +207,7 @@ export type FleetVehicleStatus =
 export type FleetVehicle = {
   id: string;
   truckNumber: string;
+  location: AirportCode;
   type: FleetVehicleType;
   size: "Small" | "Medium" | "Large";
   make: string;

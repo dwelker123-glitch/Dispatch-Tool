@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import type { FlightAssignment, ServiceType } from "../types/dispatch";
+import type { AirportCode, FlightAssignment, ServiceType } from "../types/dispatch";
 import { normalizeAircraftType } from "./aircraftMap";
 
 type ScheduleRow = {
@@ -68,8 +68,16 @@ function toFlightAssignment(row: ScheduleRow, index: number): FlightAssignment {
     inboundEta: "-",
     aircraft: row.aircraftType || "Unknown",
     serviceType,
+    originAirport: normalizeAirport(row.originKitchen),
+    destinationAirport: row.destination,
     notes: `Imported ${row.departureDate}. From ${row.originKitchen} to ${row.destination}.`,
   };
+}
+
+function normalizeAirport(value: string): AirportCode | undefined {
+  const code = value.trim().toUpperCase();
+  if (["ORD", "SEA", "DFW", "DEN", "LAX", "IAH"].includes(code)) return code as AirportCode;
+  return undefined;
 }
 
 function cellText(value: unknown) {

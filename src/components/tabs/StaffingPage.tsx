@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Clock3, UserCheck, UserX, Users } from "lucide-react";
+import { airportOptions } from "../../data/airports";
 import { mockStaffing, staffRoles, staffStatuses } from "../../data/mockStaffing";
-import type { OperationType, StaffMember, StaffRole, StaffStatus } from "../../types/dispatch";
+import type { AirportCode, OperationType, StaffMember, StaffRole, StaffStatus } from "../../types/dispatch";
 import { KpiCard } from "../ui/KpiCard";
 import { Panel } from "../ui/Panel";
 
@@ -9,6 +10,7 @@ type StaffFilter = "All";
 
 export function StaffingPage() {
   const [staff, setStaff] = useState<StaffMember[]>(mockStaffing);
+  const [locationFilter, setLocationFilter] = useState<AirportCode | StaffFilter>("All");
   const [roleFilter, setRoleFilter] = useState<StaffRole | StaffFilter>("All");
   const [operationFilter, setOperationFilter] = useState<OperationType | StaffFilter>("All");
   const [statusFilter, setStatusFilter] = useState<StaffStatus | StaffFilter>("All");
@@ -16,11 +18,12 @@ export function StaffingPage() {
 
   const shiftStarts = useMemo(() => Array.from(new Set(staff.map((member) => member.shift.start))), [staff]);
   const filteredStaff = staff.filter((member) => {
+    const locationMatches = locationFilter === "All" || member.location === locationFilter;
     const roleMatches = roleFilter === "All" || member.role === roleFilter;
     const operationMatches = operationFilter === "All" || member.operationType === operationFilter;
     const statusMatches = statusFilter === "All" || member.status === statusFilter;
     const shiftMatches = shiftFilter === "All" || member.shift.start === shiftFilter;
-    return roleMatches && operationMatches && statusMatches && shiftMatches;
+    return locationMatches && roleMatches && operationMatches && statusMatches && shiftMatches;
   });
 
   const driversAvailable = staff.filter((member) => member.role === "Driver" && member.status === "Available").length;
@@ -49,7 +52,8 @@ export function StaffingPage() {
       </div>
 
       <Panel className="p-4">
-        <div className="grid grid-cols-[1fr_1fr_1fr_1fr_2fr] items-end gap-4">
+        <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_2fr] items-end gap-4">
+          <FilterSelect label="Location" value={locationFilter} options={["All", ...airportOptions]} onChange={(value) => setLocationFilter(value as AirportCode | StaffFilter)} />
           <FilterSelect label="Role" value={roleFilter} options={["All", ...staffRoles]} onChange={(value) => setRoleFilter(value as StaffRole | StaffFilter)} />
           <FilterSelect label="Operation" value={operationFilter} options={["All", "mainline", "express"]} onChange={(value) => setOperationFilter(value as OperationType | StaffFilter)} />
           <FilterSelect label="Status" value={statusFilter} options={["All", ...staffStatuses]} onChange={(value) => setStatusFilter(value as StaffStatus | StaffFilter)} />
@@ -66,6 +70,7 @@ export function StaffingPage() {
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
               <th className="px-4 py-3">Employee</th>
+              <th className="px-4 py-3">Location</th>
               <th className="px-4 py-3">Role</th>
               <th className="px-4 py-3">Operation</th>
               <th className="px-4 py-3">Shift</th>
@@ -79,6 +84,7 @@ export function StaffingPage() {
             {filteredStaff.map((member) => (
               <tr key={member.id} className="bg-white">
                 <td className="px-4 py-3"><div className="font-semibold text-ink">{member.name}</div><div className="text-xs text-slate-500">{member.id}</div></td>
+                <td className="px-4 py-3 font-semibold text-slate-700">{member.location}</td>
                 <td className="px-4 py-3 text-slate-700">{member.role}</td>
                 <td className="px-4 py-3 text-slate-700 capitalize">{member.operationType}</td>
                 <td className="px-4 py-3 text-slate-700">{member.shift.start} - {member.shift.end}</td>
