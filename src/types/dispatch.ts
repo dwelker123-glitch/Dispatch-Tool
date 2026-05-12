@@ -1,4 +1,6 @@
 export type AppTab =
+  | "planning"
+  | "dispatch"
   | "timeline"
   | "exceptions"
   | "tour-sheet"
@@ -53,4 +55,78 @@ export type RuleItem = {
   category: string;
   setting: string;
   value: string;
+};
+
+export type Flight = {
+  id: string;
+  flightNumber: string;
+  gate: string;
+  etd: string;
+  eta: string;
+  inboundEta: string;
+  aircraft: string;
+  serviceType: ServiceType;
+  loadWindowStart: string;
+  loadWindowEnd: string;
+  workloadUnits: number;
+};
+
+export type Helper = {
+  id: string;
+  name: string;
+  shiftStart: string;
+  shiftEnd: string;
+};
+
+export type Truck = {
+  id: string;
+  truckNumber: string;
+};
+
+export type ScheduleException = {
+  id: string;
+  flightId?: string;
+  flightNumber?: string;
+  pushId?: string;
+  issue: string;
+  cause: "driver-shortage" | "helper-shortage" | "truck-shortage" | "timing-conflict" | "food-safety-window";
+  recommendedAction: string;
+};
+
+export type Push = {
+  id: string;
+  driverId: string | null;
+  helperId: string | null;
+  truckId: string | null;
+  flights: Flight[];
+  kitchenDepartureTime: string;
+  gateServiceTime: string;
+  returnTime: string;
+  totalDurationMinutes: number;
+  exceptionFlags: string[];
+};
+
+export type ResourceInputs = {
+  availableDrivers: number;
+  availableHelpers: number;
+  availableTrucks: number;
+};
+
+export type ScheduleSummary = {
+  totalFlights: number;
+  totalPushes: number;
+  driversRequired: number;
+  helpersRequired: number;
+  maxTrucksRequired: number;
+  flightsScheduledNormally: number;
+  flightsWithExceptions: number;
+  unscheduledFlights: number;
+};
+
+export type ScheduleResult = {
+  mode: "planning" | "dispatch";
+  pushes: Push[];
+  exceptions: ScheduleException[];
+  summary: ScheduleSummary;
+  resourceBottlenecks: string[];
 };

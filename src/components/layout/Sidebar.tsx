@@ -1,7 +1,9 @@
-import { AlertTriangle, BarChart3, Clock3, FileSpreadsheet, Menu, Ruler, Settings } from "lucide-react";
+import { AlertTriangle, BarChart3, CalendarClock, Clock3, FileSpreadsheet, Menu, RadioTower, Ruler, Settings } from "lucide-react";
 import type { AppTab } from "../../types/dispatch";
 
 const navItems = [
+  { id: "planning", label: "Plan", icon: CalendarClock },
+  { id: "dispatch", label: "Dispatch", icon: RadioTower },
   { id: "timeline", label: "Timeline", icon: Clock3 },
   { id: "exceptions", label: "Exceptions", icon: AlertTriangle },
   { id: "tour-sheet", label: "Tour", icon: FileSpreadsheet },

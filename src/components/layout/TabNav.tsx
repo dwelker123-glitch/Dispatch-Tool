@@ -1,6 +1,8 @@
 import type { AppTab } from "../../types/dispatch";
 
 export const tabs: { id: AppTab; label: string }[] = [
+  { id: "planning", label: "Planning Tool" },
+  { id: "dispatch", label: "Dispatch Tool" },
   { id: "timeline", label: "Dispatcher Timeline" },
   { id: "exceptions", label: "Exceptions" },
   { id: "tour-sheet", label: "Tour Sheet" },
